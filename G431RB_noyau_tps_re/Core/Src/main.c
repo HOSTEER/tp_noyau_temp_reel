@@ -50,6 +50,7 @@
 /* USER CODE BEGIN PV */
 
 SemaphoreHandle_t sem_timer7 = NULL;
+TaskHandle_t h_task_led = NULL;
 
 /* USER CODE END PV */
 
@@ -69,10 +70,11 @@ void task_led_toggle(void * unused)
 	HAL_TIM_Base_Start_IT(&htim7);
 	for(;;){
 		printf("Led before toggled\r\n");
-		if( xSemaphoreTake(sem_timer7, 1000) == pdFALSE)
+		ulTaskNotifyTake(pdTRUE, 1000);
+		/*if( xSemaphoreTake(sem_timer7, 1000) == pdFALSE)
 		{
 			HAL_NVIC_SystemReset();
-		}
+		}*/
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 		printf("Led toggled\r\n");
 	}
@@ -83,7 +85,8 @@ void task_100ms(void * unused)
 	for(;;){
 		printf("before giving\r\n");
 		osDelay(100);
-		xSemaphoreGive(sem_timer7);
+		xTaskNotifyGive(h_task_led);
+		//xSemaphoreGive(sem_timer7);
 		printf("After giving\r\n");
 	}
 }
@@ -135,7 +138,6 @@ int main(void)
 	/* USER CODE BEGIN 2 */
 	sem_timer7 = xSemaphoreCreateBinary();
 	BaseType_t ret;
-	TaskHandle_t h_task_led = NULL;
 	ret = xTaskCreate(task_led_toggle, "LED", DEFAULT_STACK_SIZE, NULL, DEFAULT_TASK_PRIORITY, &h_task_led);
 	if(ret != pdPASS)
 	{
