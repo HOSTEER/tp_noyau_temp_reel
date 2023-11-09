@@ -36,7 +36,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEFAULT_STACK_SIZE 200
+#define DEFAULT_STACK_SIZE 260
 #define DEFAULT_TASK_PRIORITY 1
 
 /* USER CODE END PD */
@@ -113,6 +113,16 @@ void timer_led_irq_handler_cb(void)
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
 {
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+}
+
+void configureTimerForRunTimeStats(void)
+{
+
+}
+
+unsigned long getRunTimeCounterValue(void)
+{
+return 0;
 }
 
 /* USER CODE END PFP */
