@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +36,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEFAULT_STACK_SIZE 512
+#define DEFAULT_STACK_SIZE 200
 #define DEFAULT_TASK_PRIORITY 1
 
 /* USER CODE END PD */
@@ -90,7 +91,7 @@ void task_100ms(void * unused)
 	printf("task 100ms ok\r\n");
 	for(;;){
 		printf("before giving\r\n");
-		vTaskDelay(100);
+		vTaskDelay(100);		//delay qui permet de lancer une autre tache
 		if(xQueueSend(smolQueue,(void *) &TIM7->CNT,100) == errQUEUE_FULL)
 		{
 			printf("Queue full \r\n");
@@ -107,6 +108,11 @@ void timer_led_irq_handler_cb(void)
 	BaseType_t xHigherPriorityTaskToken = pdFALSE;
 	xSemaphoreGiveFromISR(sem_timer7, &xHigherPriorityTaskToken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskToken);
+}
+
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 }
 
 /* USER CODE END PFP */
