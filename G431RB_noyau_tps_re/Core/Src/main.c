@@ -117,12 +117,14 @@ void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
 
 void configureTimerForRunTimeStats(void)
 {
-
+	HAL_TIM_Base_Start(&htim2);
 }
 
 unsigned long getRunTimeCounterValue(void)
 {
-return 0;
+	unsigned long counterValue = TIM2->CNT;
+	//TIM2->CNT = 0;
+	return counterValue;
 }
 
 /* USER CODE END PFP */
@@ -162,6 +164,7 @@ int main(void)
   MX_GPIO_Init();
   MX_LPUART1_UART_Init();
   MX_TIM7_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	smolQueue = xQueueCreate(10, 2);
 	if(smolQueue == NULL)
